@@ -37,7 +37,7 @@ A guided walk through the UI, from first login to the deepest diagnostic view.
 
 ### 1. Login page
 
-![Login page](docs/img/01-login.png)
+<img width="3840" height="2095" alt="01-login" src="https://github.com/user-attachments/assets/c4e056c3-0dde-4c97-84b8-7cf8b87218a7" />
 
 The entry point. No local user database — each sign-in opens a real Vertica connection under the end-user's own credentials. The right-hand marketing panel is just a friendly intro; the left-hand form is where the work happens.
 
