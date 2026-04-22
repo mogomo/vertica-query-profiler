@@ -43,79 +43,90 @@ The entry point. No local user database — each sign-in opens a real Vertica co
 
 ### 2. Login with credentials
 
-![Login with credentials entered](docs/img/02-login-filled.png)
+<img width="2000" height="1091" alt="02-login-filled" src="https://github.com/user-attachments/assets/3791fd39-5073-4f1e-b65e-2020109c520d" />
 
 Enter any valid Vertica username and password. Vertica does the authentication; Vertica Navigator only proxies it. Session credentials are kept encrypted in memory (Fernet / AES-128-CBC + HMAC-SHA-256) for the life of the session and never written to disk.
 
 ### 3. Database Navigator — query on a table
 
-![Database Navigator with query and results](docs/img/03-navigator-query.png)
+<img width="3840" height="2095" alt="03-navigator-query" src="https://github.com/user-attachments/assets/e15f5f18-8422-4386-aa37-45d56e432640" />
+
 
 The main workspace after signing in. The left panel is a filterable tree of schemas, tables, columns, and views, built from `v_catalog`. Check a table in the tree and press **Generate Query** to populate the editor with a `SELECT * FROM schema.table LIMIT 100;` scaffold, then run it — results appear in a tab below the editor with execution time.
 
 ### 4. SQL Beautifier
 
-![Multi-line beautified SQL](docs/img/04-beautified-sql.png)
+<img width="2000" height="1091" alt="04-beautified-sql" src="https://github.com/user-attachments/assets/d3117c09-fd98-47c9-add7-0e9e7e7826cf" />
+
 
 Paste any query (messy or minified) and click **Beautify**. A server-side tokenizer normalizes keyword casing, breaks the SELECT list onto separate lines, aligns `JOIN … ON`, stacks conjunctions, and indents subqueries / CASE expressions. Reformatting an already-formatted statement is idempotent — no drift between runs.
 
 ### 5. Tabbed query results
 
-![Query results tab](docs/img/05-query-results.png)
+<img width="2000" height="1091" alt="05-query-results" src="https://github.com/user-attachments/assets/a40b3993-fcb2-4b08-9687-fea69e87a2ce" />
+
 
 Every `Run Queries` call opens its own tab with the execution time, a scrollable result grid, and close buttons per tab. Errors land in their own tab so they never blow away a good result set.
 
 ### 6. Profile tab — textual profile with dynamic findings
 
-![Profile tab with dynamic findings and links to graph/skew/scorecard](docs/img/06-profile-text.png)
+<img width="2000" height="1091" alt="06-profile-text" src="https://github.com/user-attachments/assets/296b905a-a013-40e1-90ea-94d73583a8b5" />
+
 
 Select a single statement and click **Profile** to run it under Vertica's `PROFILE` wrapper and collect the full set of diagnostic artefacts from `v_monitor` and `v_internal`. The header line summarises the run (Duration, Plan Steps, Good / Warning / Bad counts) and the three links below jump to the **Graphical Profile**, **Skew Between Nodes**, and **ScoreCard** views. Underneath, a plain-English findings list explains what the optimizer did and why — slowest path, event triggers, node skew, and concrete remediation for each.
 
 ### 7. Graphical Query Execution Tree
 
-![Graphical Query Execution Tree with card popup](docs/img/07-graphical-profile.png)
+<img width="2000" height="1091" alt="07-graphical-profile" src="https://github.com/user-attachments/assets/e3f29050-8b7a-4f4f-9aae-1a9bf3bf83fd" />
+
 
 The same query, rendered as a branching tree of cards — one per `path_id` — with coloured edges that reflect data flow (gray = local, orange dashed = resegment, purple dashed = broadcast). Click any card to open a popup with **Performance**, **Estimates**, **Execution** (per-node breakdown), **Details**, **Operators**, and **Query Events** sections. Card colour is an advisory: red means "start here," orange means "investigate," blue / green are fine.
 
 ### 8. Help overlay — "How to read this tree"
 
-![Tree help overlay](docs/img/08-tree-help-overlay.png)
+<img width="2000" height="1091" alt="08-tree-help-overlay" src="https://github.com/user-attachments/assets/2a3c9c7f-9e62-4ed7-bf3c-1af4e6f4482d" />
+
 
 Every page has `?` help chips that open a plain-English explanation. The tree-overview chip adds a **dynamic** "About this specific query" section: observations computed server-side from the actual profile (tree shape, slowest path with share of wall-clock, spill events, resegment events, per-node timing skew, projection suggestions) — all offline, no LLM, no network calls.
 
 ### 9. Card detail popup
 
-![Card performance details](docs/img/09-card-details-popup.png)
+<img width="2000" height="1091" alt="09-card-details-popup" src="https://github.com/user-attachments/assets/4046bb09-eaa3-44e3-82d1-82c1478343b3" />
+
 
 Clicking a card opens its detail popup anchored to the cursor. The popup shows a **status banner** explaining why the card got its colour (here: MODERATE — "No bad query events; time is 0% of the slowest card"), followed by every metric the path produced: percentage of query, exec time, clock time, rows processed, memory, cost, and estimates vs. actuals.
 
 ### 10. Formula / source-SQL overlay
 
-![Source chip showing the exact SQL and formula](docs/img/10-formula-chip-overlay.png)
+<img width="3840" height="2095" alt="10-formula-chip-overlay" src="https://github.com/user-attachments/assets/6b9d07fc-c694-4032-93c0-9da93884a43d" />
+
 
 Every value on the graph page has a small `ⓘ` chip next to it. Clicking the chip opens this overlay showing the exact SQL used to produce that number and the Python formula that post-processed it. This lets a DBA cross-check every displayed value against the system tables — nothing is opaque.
 
 ### 11. Skew Between Nodes — chart view
 
-![Cross-node skew ranking](docs/img/11-skew-chart.png)
+<img width="2000" height="1091" alt="11-skew-chart" src="https://github.com/user-attachments/assets/8f67127e-8768-4063-bad0-f2e840fada5a" />
+
 
 Ranks every distributed execution step by the time gap between the fastest and slowest node. At the top: the slowest step (`CompilePlan:EEpreexecute` here — 24.75 s skew), the node that lagged (`v_eevdb_node0003`), and the per-step bar chart. Toggle between **Skew view** (dispatch imbalance) and **Duration view** (work per node). Ctrl+wheel or the `+ / –` buttons zoom; click and drag to pan.
 
 ### 12. Skew popup — per-node breakdown
 
-![Skew popup with per-node completion offsets and durations](docs/img/12-skew-popup.png)
+<img width="2000" height="1091" alt="12-skew-popup" src="https://github.com/user-attachments/assets/5604b05c-5c2f-4c4c-a9c7-75a9f10285dc" />
+
 
 Click a bar to open this popup. It names the slowest-to-finish node, the first-to-finish node, start-time skew, completion skew, longest per-node duration, and every retry attempt with its timestamp. The three dimensions (start skew, duration, completion skew) let you separate dispatch problems from data-plane problems.
 
 ### 13. Query Scorecard — priority filters
 
-![Query Scorecard with filter pills and collapsed groups](docs/img/13-scorecard-collapsed.png)
+<img width="2000" height="1091" alt="13-scorecard-collapsed" src="https://github.com/user-attachments/assets/b56ae89b-aa44-4592-810f-16a45d05697b" />
+
 
 A rule-based grading of the query against ~30 diagnostic checks. The top bar shows the counts per severity (HIGH 9, MEDIUM 3, LOW 0, OK 12, INFO 6) — click a pill to filter. The body collapses same-severity findings into a single row by default; the finger cue invites a click to expand.
 
 ### 14. Query Scorecard — expanded findings
 
-![Scorecard findings with severity, description, action, measured value](docs/img/14-scorecard-expanded.png)
+<img width="3840" height="2095" alt="14-scorecard-expanded" src="https://github.com/user-attachments/assets/545d3110-e91c-42d8-86b3-3c43e240c641" />
 
 The expanded view. Each row is a single check: **severity**, **type** (GROUPBY / NETWORK / STATS / CPU / SKEW / EVENT), a short **finding** line, a **description**, a **recommended action** (what to change — often with copy-pasteable SQL), and the **measured value** that tripped the check. The underlying SQL runs inside session-private `LOCAL TEMPORARY` tables so it never interferes with other sessions.
 
