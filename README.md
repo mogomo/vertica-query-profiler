@@ -201,7 +201,7 @@ cat > ASSETS/vertica_credentials.json <<'EOF'
 EOF
 
 # 3. Start the server
-python3 1_1_vertica_navigator.py
+python3 1_vertica_navigator.py
 
 # 4. Open https://<your-host>:8443/ in a browser and sign in.
 ```
@@ -414,13 +414,13 @@ The whole app is one file. To work on it:
 
 ```bash
 # Run directly
-python3 1_1_vertica_navigator.py
+python3 1_vertica_navigator.py
 
 # Lint
-python3 -m pyflakes 1_1_vertica_navigator.py
+python3 -m pyflakes 1_vertica_navigator.py
 
 # Syntax sanity
-python3 -c "import py_compile; py_compile.compile('1_1_vertica_navigator.py', doraise=True)"
+python3 -c "import py_compile; py_compile.compile('1_vertica_navigator.py', doraise=True)"
 ```
 
 The HTML / CSS / JS for each page is stored as a Python raw-string constant (`LOGIN_HTML`, `APP_HTML`, `PROFILE_HTML`, `SKEW_HTML`, `SCORECARD_HTML`). Templating is plain `str.replace(...)` of a few well-known placeholders — no Jinja, no Mustache. This keeps the file single-file-deployable.
