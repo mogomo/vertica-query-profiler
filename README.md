@@ -386,6 +386,29 @@ If the signed-in user is not a superuser, most of those require elevated privile
 
 ## Troubleshooting
 
+### `OSError: [Errno 98] Address already in use`
+If startup fails with an error like this:
+```
+ERROR - [VerticaNavigator] - Server error: [Errno 98] Address already in use
+...
+OSError: [Errno 98] Address already in use
+```
+it means the HTTPS port the server is trying to bind to (default `8443`) is still held by another process — usually a previous run of `1_vertica_navigator.py` that did not release the socket cleanly.  
+In practice, **waiting for the port to free itself is not a reliable fix**: the socket can stay in `TIME_WAIT` or remain bound by a lingering Python process for a long time, and simply re-running the script on the same port will keep failing.
+
+The quickest fix is to start the server on a different port by overriding the port environment variable before re-running the script.  
+The relevant variables are `VERTICA_NAVIGATOR_HTTPS_PORT` (default `8443`) and `VERTICA_NAVIGATOR_HTTP_PORT` (default `8001`). For example:
+
+```bash
+export VERTICA_NAVIGATOR_HTTPS_PORT=8445
+export VERTICA_NAVIGATOR_HTTP_PORT=8003
+python3 1_vertica_navigator.py
+```
+
+Then open the UI at `https://<host>:8445` instead of the default.  
+If you would rather reclaim the original port, first identify and stop the process still holding it  
+(e.g. `lsof -i :8443` or `ss -ltnp | grep 8443`, then `kill <PID>`) before starting the script again.
+
 ### "Could not find `vertica_credentials.json`"
 Create it at one of the three paths listed under [Credentials file](#credentials-file).
 
