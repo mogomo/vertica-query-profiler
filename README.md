@@ -236,6 +236,40 @@ sudo python3 -m pip install vertica-python cryptography
 
 ## Configuration
 
+### Expected file layout
+
+Before the first run, your checkout should look roughly like this:
+
+```
+.
+├── 1_vertica_navigator.py
+├── README.md
+└── ASSETS/
+    ├── vertica_credentials.json   # connection config (see below)
+    └── verticalogo.png            # favicon served at /ASSETS/verticalogo.png
+```
+
+Equivalent `ll ASSETS/` on a fresh checkout:
+
+```
+$ ll ASSETS
+-rw-r--r-- 1 dbadmin verticadba  145 Apr 23 11:25 vertica_credentials.json
+-rw-r--r-- 1 dbadmin verticadba 2682 Apr 14 22:49 verticalogo.png
+```
+
+On the **first run with HTTPS enabled** (the default), the script will also create a `generated_tls/` subdirectory under `ASSETS/` containing a self-signed certificate and private key:
+
+```
+ASSETS/
+├── vertica_credentials.json
+├── verticalogo.png
+└── generated_tls/
+    ├── server.crt
+    └── server.key
+```
+
+You can override the certificate location with `VERTICA_NAVIGATOR_TLS_DIR`, `VERTICA_NAVIGATOR_SSL_CERTFILE`, and `VERTICA_NAVIGATOR_SSL_KEYFILE` if you want to point at your own CA-signed cert instead.
+
 ### Credentials file
 
 A JSON file describing **how to connect to Vertica** — not end-user credentials. Searched in this order:
